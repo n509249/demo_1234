@@ -1,0 +1,54 @@
+name: Multi-Branch Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/branch1
+      - feature/branch2
+
+jobs:
+  job_branch_main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run main job
+        run: |
+          echo "Running main job"
+          # Add your main job steps here
+
+  job_branch_develop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run develop job
+        run: |
+          echo "Running develop job"
+          # Add your develop job steps here
+
+  job_branch_branch1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run branch1 job
+        run: |
+          echo "Running branch1 job"
+          # Add your branch1 job steps here
+
+  job_branch_branch2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run branch2 job
+        run: |
+          echo "Running branch2 job"
+          # Add your branch2 job steps here
