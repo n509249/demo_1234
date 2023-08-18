@@ -1,7 +1,7 @@
 name: "Terraform action"
 on:
   workflow_run:
-    workflows: ["Configure AWS credentials from AWS account"]
+    workflows: ["deploy"]
     types:
       - manual
   workflow_dispatch:
