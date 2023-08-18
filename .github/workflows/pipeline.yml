@@ -1,54 +1,96 @@
-name: Multi-Branch Workflow
-
+name: "Terraform action"
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-      - develop
-      - feature/branch1
-      - feature/branch2
-
+      - feature
+  pull_request:
+permissions:
+  id-token: write # This is required for aws oidc connection
+  contents: read # This is required for actions/checkout
+  pull-requests: write # This is required for gh bot to comment PR
+env:
+  TF_LOG: INFO
+  AWS_REGION: ${{ secrets.AWS_REGION }}
 jobs:
-  job_branch_main:
+  deploy:
+    if: startsWith(github.ref, 'refs/heads/feature')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Git checkout
+        uses: actions/checkout@v3
 
-      - name: Run main job
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHub-OIDC-TERRAFORM
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.5
+
+
+      - name: Terraform Init
+        id: init
+        env:
+          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+          AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
+        if: github.ref == 'refs/heads/feature'
         run: |
-          echo "Running main job"
-          # Add your main job steps here
+          cd iac-scripts
+          terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
+          terraform apply -input=false -auto-approve -var-file="dev.tfvars"
 
-  job_branch_develop:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Run develop job
+      - name: deploy-job
+        id: init
+        env:
+          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+          AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
+        if: github.ref == 'refs/heads/main'
         run: |
-          echo "Running develop job"
-          # Add your develop job steps here
+          cd iac-scripts
+          terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
+          terraform apply -input=false -auto-approve -var-file="dev.tfvars"
 
-  job_branch_branch1:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  deploy1:
+    if: startsWith(github.ref, 'refs/heads/feature')
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          shell: bash
+          working-directory: .
+      steps:
+        - name: Git checkout
+          uses: actions/checkout@v3
 
-      - name: Run branch1 job
-        run: |
-          echo "Running branch1 job"
-          # Add your branch1 job steps here
+        - name: Configure AWS credentials from AWS account
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            role-to-assume: ${{ secrets.AWS_ROLE }}
+            aws-region: ${{ secrets.AWS_REGION }}
+            role-session-name: GitHub-OIDC-TERRAFORM
 
-  job_branch_branch2:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_version: 1.2.5
 
-      - name: Run branch2 job
-        run: |
-          echo "Running branch2 job"
-          # Add your branch2 job steps here
+
+        - name: Terraform Init
+          id: init
+          env:
+            AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+            AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
+          if: github.ref == 'refs/heads/feature'
+          run: |
+            cd iac-scripts
+            terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
+            terraform apply -input=false -auto-approve -var-file="dev.tfvars"
