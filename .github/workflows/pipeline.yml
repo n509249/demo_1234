@@ -50,7 +50,7 @@ jobs:
           terraform apply -input=false -auto-approve -var-file="dev.tfvars"
 
       - name: deploy-job
-        id: init
+        id: init1
         env:
           AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
           AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
