@@ -1,103 +1,42 @@
-name: "Terraform action"
+name: Multi-Environment Deployment
+
 on:
-  workflow_run:
-    workflows: ["deploy1"]
-    types:
-      - manual
-  workflow_dispatch:
   push:
     branches:
-      - main
       - feature
-  pull_request:
-permissions:
-  id-token: write # This is required for aws oidc connection
-  contents: read # This is required for actions/checkout
-  pull-requests: write # This is required for gh bot to comment PR
-env:
-  TF_LOG: INFO
-  AWS_REGION: ${{ secrets.AWS_REGION }}
+      - feature/
+      - main
+
 jobs:
   deploy:
-    #if: startsWith(github.ref, 'refs/heads/feature')
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
+
     steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-session-name: GitHub-OIDC-TERRAFORM
+          node-version: '14'
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.5
+      - name: Install dependencies
+        run: npm install
 
+      - name: Deploy to Feature Environments
+        if: startsWith(github.ref, 'refs/heads/feature')
+        run: |
+          echo 'hello world'
+          # Add commands to deploy to feature environments
 
-      - name: dev deploy
-        id: init
-        #env:
-        #  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-        #  AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
+      - name: Deploy to Release Environments
+        if: startsWith(github.ref, 'refs/heads/feature/')
+        run: |
+          # Add commands to deploy to release environments
+          echo 'hello'
+
+      - name: Deploy to Master Environments
         if: github.ref == 'refs/heads/main'
         run: |
-          cd iac-scripts
-          #terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
-          terraform init
-          terraform apply -input=false -auto-approve -var-file="dev.tfvars"
-
-      - name: test deploy
-        id: init1
-        #env:
-         # AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-          #AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
-        if: github.ref == 'refs/heads/main'
-        run: |
-          cd iac-scripts
-          #terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
-          #terraform apply -input=false -auto-approve -var-file="dev.tfvars"
-          terraform init
-          terraform apply -input=false -auto-approve -var-file="test.tfvars"
-
-  deploy1:
-    if: startsWith(github.ref, 'refs/heads/feature')
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-session-name: GitHub-OIDC-TERRAFORM
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.5
-
-
-      - name: Terraform Init
-        id: init
-        env:
-          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-          AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
-        if: github.ref == 'refs/heads/feature'
-        run: |
-          cd iac-scripts
-          terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
-          terraform apply -input=false -auto-approve -var-file="dev.tfvars"
+          # Add commands to deploy to master environments
+          echo 'hi'
