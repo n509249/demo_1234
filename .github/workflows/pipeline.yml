@@ -1,7 +1,7 @@
 name: "Terraform action"
 on:
   workflow_run:
-    workflows: ["deploy"]
+    workflows: ["deploy1"]
     types:
       - manual
   workflow_dispatch:
@@ -42,30 +42,33 @@ jobs:
           terraform_version: 1.2.5
 
 
-      - name: Terraform Init
+      - name: dev deploy
         id: init
-        env:
-          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-          AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
+        #env:
+        #  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+        #  AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
         if: github.ref == 'refs/heads/feature'
         run: |
           cd iac-scripts
-          terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
+          #terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
+          terraform init
           terraform apply -input=false -auto-approve -var-file="dev.tfvars"
 
-      - name: deploy-job1
+      - name: test deploy
         id: init1
-        env:
-          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-          AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
+        #env:
+         # AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+          #AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
         if: github.ref == 'refs/heads/main'
         run: |
           cd iac-scripts
-          terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
-          terraform apply -input=false -auto-approve -var-file="dev.tfvars"
+          #terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
+          #terraform apply -input=false -auto-approve -var-file="dev.tfvars"
+          terraform init
+          terraform apply -input=false -auto-approve -var-file="test.tfvars"
 
   deploy1:
-    if: startsWith(github.ref, 'refs/heads/main')
+    if: startsWith(github.ref, 'refs/heads/feature')
     runs-on: ubuntu-latest
     defaults:
       run:
