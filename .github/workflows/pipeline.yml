@@ -37,7 +37,7 @@ jobs:
           echo 'hello'
 
       - name: Deploy to Master Environments
-        if: github.event_name == 'push'&& github.ref == 'refs/heads/main' && steps.manual.outputs.approved == 'true'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
         run: |
           # Add commands to deploy to master environments
           echo 'hi'
