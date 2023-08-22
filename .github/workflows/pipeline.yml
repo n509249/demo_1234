@@ -31,13 +31,13 @@ jobs:
           # Add commands to deploy to feature environments
 
       - name: Deploy to Release Environments
-        if: startsWith(github.ref, 'refs/heads/feature/***')
+        if: startsWith(github.ref, 'refs/heads/feature')
         run: |
           # Add commands to deploy to release environments
           echo 'hello'
 
       - name: Deploy to Master Environments
-        if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+        if: startsWith(github.ref, 'refs/heads/main') && github.event_name == 'workflow_dispatch'
         run: |
           # Add commands to deploy to master environments
           echo 'hi'
