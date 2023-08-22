@@ -30,7 +30,41 @@ jobs:
           # Add commands to deploy to feature environments
 
       - name: Deploy to Release Environments
-        if: startsWith(github.ref, 'refs/heads/feature/')
+        if: startsWith(github.ref, 'refs/heads/feature/***')
+        run: |
+          # Add commands to deploy to release environments
+          echo 'hello'
+
+      - name: Deploy to Master Environments
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Add commands to deploy to master environments
+          echo 'hi'
+
+  deploy2:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/feature'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to Feature Environments
+        if: startsWith(github.ref, 'refs/heads/feature')
+        run: |
+          echo 'hello world'
+          # Add commands to deploy to feature environments
+
+      - name: Deploy to Release Environments
+        if: startsWith(github.ref, 'refs/heads/feature/***')
         run: |
           # Add commands to deploy to release environments
           echo 'hello'
