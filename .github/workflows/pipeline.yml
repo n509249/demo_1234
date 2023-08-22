@@ -1,6 +1,7 @@
 name: Multi-Environment Deployment
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - feature
