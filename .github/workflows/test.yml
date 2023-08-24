@@ -8,4 +8,4 @@ on:
 
 jobs:
   call-workflow:
-    uses: Demo_project/.github/workflows/blank.yml@main
+    uses: n509249/Demo_project/.github/workflows/blank.yml@main
