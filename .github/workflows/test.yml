@@ -7,4 +7,4 @@ on:
 
 jobs:
   build-and-test:
-    uses: ./Demo_project/.github/workflows/pipeline.yml
+    uses: ./.github/workflows/blank.yml
