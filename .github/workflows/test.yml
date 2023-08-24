@@ -2,11 +2,11 @@ name: Build and Test for Repository 2
 
 on:
   workflow_dispatch:
-    workflows: ["deploy"]
   push:
     branches:
       - main
 
 jobs:
   build-and-test:
-    uses: ./.github/workflows/pipeline.yml
+    call-workflow:
+      uses: Demo_project/.github/workflows/blank.yml@main
