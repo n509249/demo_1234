@@ -7,6 +7,5 @@ on:
       - main
 
 jobs:
-  build-and-test:
-    call-workflow:
-      uses: Demo_project/.github/workflows/blank.yml@main
+  call-workflow:
+    uses: Demo_project/.github/workflows/blank.yml@main
