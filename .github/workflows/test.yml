@@ -2,7 +2,7 @@ name: Build and Test for Repository 2
 
 on:
   workflow_dispatch:
-  workflows: ["deploy"]
+    workflows: ["deploy"]
   push:
     branches:
       - main
