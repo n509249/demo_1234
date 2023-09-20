@@ -1,11 +1,38 @@
-name: Build and Test for Repository 2
+name: Add Secrets to GitHub Repo
+
+
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
 
+
+
 jobs:
-  call-workflow:
-    uses: n509249/Demo_project/.github/workflows/blank.yml@main
+  add-secrets:
+    runs-on: ubuntu-latest
+
+
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+
+
+    - name: Add Secrets
+      env:
+        SECRET_NAME: "your_secret_name"
+        SECRET_VALUE: "your_secret_value"
+        GITHUB_TOKEN: ${{ secrets.YOUR_PAT_SECRET }} # Personal Access Token (PAT) with repo scope
+
+      run: |
+        # Create a JSON payload with your secret value
+        PAYLOAD="{\"encrypted_value\":\"$(echo -n "$SECRET_VALUE" | openssl enc -base64 -A)\",\"key_id\":null}"
+
+        # Use curl to add the secret to your repository
+        curl -X PUT \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          -d "$PAYLOAD" \ "https://api.github.com/repos/n509249/Demo_project/actions/secrets/$SECRET_NAME"
