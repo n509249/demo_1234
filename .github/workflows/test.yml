@@ -21,7 +21,7 @@ jobs:
       env:
         SECRET_NAME: "your_secret_name"
         SECRET_VALUE: "your_secret_value"
-        GITHUB_TOKEN: ${{ secrets.YOUR_PAT_SECRET }} # Personal Access Token (PAT) with repo scope
+        GITHUB_TOKEN: ${{ secrets.YOUR_PAT_SECRET }}
       run: |
         # Create a JSON payload with your secret value
         PAYLOAD="{\"encrypted_value\":\"$(echo -n "$SECRET_VALUE" | openssl enc -base64 -A)\",\"key_id\":null}"
