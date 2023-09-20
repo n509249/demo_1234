@@ -22,12 +22,13 @@ jobs:
           GITLAB_PROJECT_ID: YOUR_GITLAB_PROJECT_ID
 
         run: |
-          #while IFS=' ' read -r project_name project_id; do
+          while IFS=' ' read -r project_id; do
           #token="${{ secrets.HUB_PERSONAL_ACCESS_TOKEN }}"
+          while IFS=' ' read -r project_name; do
           PRIVATE_TOKEN="${{ secrets.GITLAB_TOKEN }}"
           #response_code=$(curl -w "%{http_code}\n" -o response.json -X POST -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3+json" -d '{"name": "'"$project_name"'", "private": true}' https://api.github.com/orgs/BritishAirways-Ent/repos)
           #response_code=$(curl -w "%{http_code}\n" -o response.json --request POST --header "PRIVATE-TOKEN:$PRIVATE_TOKEN" --header "Content-Type:application/json" --data '{"url":"https://n509249:'"$token"'@github.com/BritishAirways-Ent/'"$project_name"'.git","enabled": true}'  https://gitlab.com/api/v4/projects/$project_id/remote_mirrors)
-          response_code=$(curl -w "%{http_code}\n" -o response.json --header "PRIVATE-TOKEN: $PRIVATE_TOKEN" "https://gitlab.com/api/v4/projects/32754322/variables")
+          response_code=$(curl -w "%{http_code}\n" -o response.json --header "PRIVATE-TOKEN: $PRIVATE_TOKEN" "https://gitlab.com/api/v4/projects/$project_id/variables/TF_CLI_ARGS_init?filter[environment_scope]=$project_name")
           echo $response.json
           response_body=$(jq '.' response.json)
                 if [[ "$(echo "$response_code")" -ne 201 ]]; then
@@ -39,7 +40,8 @@ jobs:
           if [[ "$isError" = true ]]; then
                        exit 1
           fi
-          #done <project_name_url.txt
+          done <project_name.txt
+          done <project_name_url.txt
           # Use the GitLab API to fetch your variables
           # Replace 'YOUR_GITLAB_PROJECT_ID' with your GitLab project ID
           #curl --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
