@@ -28,7 +28,7 @@ jobs:
           PRIVATE_TOKEN="${{ secrets.GITLAB_TOKEN }}"
           #response_code=$(curl -w "%{http_code}\n" -o response.json -X POST -H "Authorization: Bearer $token" -H "Accept: application/vnd.github.v3+json" -d '{"name": "'"$project_name"'", "private": true}' https://api.github.com/orgs/BritishAirways-Ent/repos)
           #response_code=$(curl -w "%{http_code}\n" -o response.json --request POST --header "PRIVATE-TOKEN:$PRIVATE_TOKEN" --header "Content-Type:application/json" --data '{"url":"https://n509249:'"$token"'@github.com/BritishAirways-Ent/'"$project_name"'.git","enabled": true}'  https://gitlab.com/api/v4/projects/$project_id/remote_mirrors)
-          response_code=$(curl -w "%{http_code}\n" -o response.json --header "PRIVATE-TOKEN: $PRIVATE_TOKEN" "https://gitlab.com/api/v4/projects/$project_id/variables/TF_CLI_ARGS_init?filter[environment_scope]=$project_name")
+          response_code=$(curl --globoff -w "%{http_code}\n" -o response.json --header "PRIVATE-TOKEN: $PRIVATE_TOKEN" "https://gitlab.com/api/v4/projects/$project_id/variables/TF_CLI_ARGS_init?filter[environment_scope]=$project_name")
           echo $response.json
           response_body=$(jq '.' response.json)
                 if [[ "$(echo "$response_code")" -ne 201 ]]; then
