@@ -22,6 +22,5 @@ jobs:
         SECRET_NAME: "your_secret_name"
         SECRET_VALUE: "your_secret_value"
         GITHUB_TOKEN: ${{ secrets.YOUR_PAT_SECRET }}
-      run:
-      gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project
-      
+      run: |
+        gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project
