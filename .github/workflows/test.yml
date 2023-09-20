@@ -23,11 +23,5 @@ jobs:
         SECRET_VALUE: "your_secret_value"
         GITHUB_TOKEN: ${{ secrets.YOUR_PAT_SECRET }}
       run: |
-        # Create a JSON payload with your secret value
-        PAYLOAD="{\"encrypted_value\":\"$(echo -n "$SECRET_VALUE" | openssl enc -base64 -A)\",\"key_id\":null}"
-
-        # Use curl to add the secret to your repository
-        curl -X PUT \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token $GITHUB_TOKEN" \
-          -d "$PAYLOAD" \ "https://api.github.com/repos/n509249/Demo_project/actions/secrets/$SECRET_NAME"
+        winget install --id GitHub.cli
+        gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project
