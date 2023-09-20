@@ -37,9 +37,6 @@ jobs:
                   echo "ERROR CODE:" $response_code
                   echo "ERROR MESSAGE:" $response_body
                 fi
-        #  if [[ "$isError" = true ]]; then
-         #              exit 1
-          #fi
           done <project_name.txt
           done <project_name_url.txt
           # Use the GitLab API to fetch your variables
