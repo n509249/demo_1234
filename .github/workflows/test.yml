@@ -23,4 +23,5 @@ jobs:
         SECRET_VALUE: "your_secret_value"
         GITHUB_TOKEN: ${{ secrets.YOUR_PAT_SECRET }}
       run: |
-        gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project | jq .id  
+        Repo_id=$(gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project | jq .id)
+        echo $Repo_id
