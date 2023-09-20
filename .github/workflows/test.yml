@@ -30,4 +30,4 @@ jobs:
         curl -X PUT \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token $GITHUB_TOKEN" \
-          -d "$PAYLOAD" \ "https://api.github.com/repos/Demo_project/actions/secrets/$SECRET_NAME"
+          -d "$PAYLOAD" \ "https://github.com/repos/n509249/Demo_project/actions/secrets/$SECRET_NAME"
