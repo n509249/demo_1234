@@ -25,7 +25,8 @@ jobs:
       run: |
         Secrte_value=$(curl --globoff --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.com/api/v4/projects/32754322/variables/TF_CLI_ARGS_init?filter[environment_scope]=dev" | jq --raw-output '.value')
         echo $Secrte_value
-        secret_json="$(jq -n --arg value "$Secrte_value" '$value')"
+        #secret_json="$(jq -n --arg value "$Secrte_value" '$value')"
+        secret_json=$(echo "$response" | openssl enc -aes-256-cbc -a -salt -pass pass:your_password)
         echo $secret_json
         #secret_json="abcdeftrh"
         Repo_id=$(gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project | jq .id)
