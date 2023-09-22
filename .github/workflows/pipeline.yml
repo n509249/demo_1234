@@ -1,0 +1,32 @@
+on:
+  push:
+    branches:
+      - main
+
+
+
+jobs:
+
+  copy_variables:
+    runs-on: ubuntu-latest
+
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Export GitLab Variables
+        env:
+          GITLAB_API_TOKEN: ${{ secrets.GITLAB_API_TOKEN }}
+          GITLAB_PROJECT_ID: YOUR_GITLAB_PROJECT_ID
+
+        run: |
+          while IFS=' ' read -r environment_name; do
+          PRIVATE_TOKEN="${{ secrets.GITLAB_TOKEN }}"
+          Secrte_value=$(curl --globoff --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.com/api/v4/projects/29571108/variables/TF_CLI_ARGS_init?filter[environment_scope]=$environment_name" | jq --raw-output '.value')
+          echo $Secrte_value
+          done <project_name_url.txt
+          # Use the GitLab API to fetch your variables
+
+
