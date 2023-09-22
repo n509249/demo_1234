@@ -24,11 +24,12 @@ jobs:
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       run: |
         Secrte_value=$(curl --globoff --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.com/api/v4/projects/32754322/variables/TF_CLI_ARGS_init?filter[environment_scope]=dev" | jq --raw-output '.value')
-        echo $Secrte_value
+        #echo $Secrte_value
         Repo_id=$(gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project | jq .id)
-        echo $Repo_id
-        Public_key=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/public-key | jq --raw-output '.key_id')
-        gh secret set $Secrte_value
-        #curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/SECRET_NAME  -d '{"encrypted_value":"Divvvvv567","key_id":"'"$Public_key"'"}'
-        #curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/SECRET_NAME  -d '{"encrypted_value":"c2Vjcm1V0","key_id":"'"$Public_key"'"}'
+        #echo $Repo_id
+        Public_key=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/public-key | jq --raw-output '.key')
+        key_id=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/public-key | jq --raw-output '.key_id')
+        Value=$(python encrypts.py $Secrte_value $Public_key)
+        echo $Value
+        #curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/SECRET_NAME  -d '{"encrypted_value":"c2Vjcm1V0","key_id":"'"$key_id"'"}'
         echo $Repo_id
