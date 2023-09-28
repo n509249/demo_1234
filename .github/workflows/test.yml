@@ -16,26 +16,27 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: python script
-      run: python -m pip install pynac
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+          python-version: 3.x
+
+    - name: Install dependencies
+      run: |
+          pip install pynacl
+          pip install requests
+
 
     - name: Add Secrets
-      #env:
-       # SECRET_NAME: "your_secret_name"
-       # SECRET_VALUE: "your_secret_value"
-        #GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      env:
+        #SECRET_NAME: "your_secret_name"
+        #SECRET_VALUE: "your_secret_value"
+        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.YOUR_PAT_SECRET }}
       run: |
-        HUB_TOKEN=${{ secrets.YOUR_PAT_SECRET }}
-        GITLAB_TOKEN=${{ secrets.GITLAB_TOKEN }}
-        #Secrte_value=$(curl --globoff --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.com/api/v4/projects/32754322/variables/TF_CLI_ARGS_init?filter[environment_scope]=dev" | jq --raw-output '.value')
-        #echo $Secrte_value
-        #Repo_id=$(gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project | jq .id)
-        #echo $Repo_id
-        Public_key=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $HUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/public-key | jq --raw-output '.key')
-        echo $Public_key
-        #key_id=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $HUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/public-key | jq --raw-output '.key_id')
-        #python -m pip install pynac
-        #Value=$(python encrypts.py $Secrte_value $Public_key)
-        #echo $Value
-        #curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/SECRET_NAME  -d '{"encrypted_value":"c2Vjcm1V0","key_id":"'"$key_id"'"}'
-        #echo $Repo_id
+        Secrte_value=$(curl --globoff --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.com/api/v4/projects/32754322/variables/TF_CLI_ARGS_init?filter[environment_scope]=dev" | jq --raw-output '.value')
+        Repo_id=$(gh api -H "Accept: application/vnd.github+json" repos/n509249/Demo_project | jq .id)
+        Public_key=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/public-key | jq --raw-output '.key')
+        key_id=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/public-key | jq --raw-output '.key_id')
+        Value=$(python encrypts.py $Secrte_value $Public_key)
+        curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repositories/$Repo_id/environments/dev/secrets/SECRET_NAME  -d '{"encrypted_value":"'"$Value"'","key_id":"'"$key_id"'"}'
