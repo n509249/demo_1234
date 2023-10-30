@@ -26,7 +26,7 @@ jobs:
 
       - name: Setup Environment 2
         run: |
-          if [ ${{ matrix.environment }} == "test" ]; then
+          if [ ${{ matrix.environment }} in "dev1" ]; then
             # Add commands to set up environment 2 here
             echo "Setting up Environment 2"
           fi
